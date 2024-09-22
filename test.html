@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Print styles for A4 */
+        @media print {
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 12px;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            /* Remove padding and background for print */
+            body,
+            .bg-gray-100 {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            .border {
+                border-color: black !important;
+            }
+
+            .bg-gray-200 {
+                background-color: #eaeaea !important;
+            }
+
+            .bg-blue-50 {
+                background-color: #f0f8ff !important;
+            }
+
+            /* Adjust font sizes and spacing */
+            .text-lg,
+            .text-xl {
+                font-size: 14px !important;
+            }
+
+            .text-base {
+                font-size: 12px !important;
+            }
+
+            .text-sm {
+                font-size: 10px !important;
+            }
+
+            .h-48 {
+                height: auto;
+            }
+
+            /* Page break inside the product table */
+            .product-table tr {
+                page-break-inside: avoid;
+            }
+
+            .summary,
+            .footer {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-8 bg-gray-100">
+    <!-- Invoice Container -->
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg">
+        <!-- Header -->
+        <div class="mb-5 flex items-start justify-between border-b pb-4 h-48 text-sm">
+            <!-- Logo and Company Info -->
+            <div>
+                <img src="logo-url-here.png" alt="Company Logo" class="mb-4">
+                <div>
+                    <p class="font-bold text-base text-gray-700">KARTHICK INDUSTRIES</p>
+                    <p class="text-gray-500">87/11, MTH Road, Mannurpet, Padi,<br /> Chennai-600050, India</p>
+                    <p class="text-gray-500">GSTIN/UIN: 33AAHPI7001F1ZS</p>
+                    <p class="text-gray-500">Phone: +91-9302159231</p>
+                </div>
+            </div>
+            <div class=" border-black">
+                <p class="font-bold text-base text-gray-700">Billed to:<br /> KARTHICK INDUSTRIES</p>
+                <div>
+                    <p class="text-gray-500">87/11, MTH Road, Mannurpet, Padi,<br /> Chennai-600050, India</p>
+                    <p class="text-gray-500">GSTIN/UIN: 33AAHPI7001F1ZS</p>
+                    <p class="text-gray-500">Phone: +91-9302159231</p>
+                </div>
+            </div>
+            <!-- Invoice Title -->
+            <div class="text-right h-full flex flex-col justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-blue-600">INVOICE</h1>
+                    <p class="text-gray-500 mt-2">Dated: <span class="font-semibold">8-Aug-2024</span></p>
+                    <p class="text-gray-500">Invoice # <span class="font-semibold">GST-2564/24-26</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buyer and Extra Information -->
+        <div class="text-left my-3">
+            <table class="text-sm border w-full">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border px-4 py-2">E-Way #</th>
+                        <th class="border px-4 py-2">Party's DC #</th>
+                        <th class="border px-4 py-2">Party's DC Date</th>
+                        <th class="border px-4 py-2">Party's GSTIN</th>
+                        <th class="border px-4 py-2">Our DC #</th>
+                        <th class="border px-4 py-2">HSN Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border px-4 py-2">5634563456</td>
+                        <td class="border px-4 py-2">245345</td>
+                        <td class="border px-4 py-2">8-Aug-2024</td>
+                        <td class="border px-4 py-2">33AQMPS2845P1Z3</td>
+                        <td class="border px-4 py-2">245345</td>
+                        <td class="border px-4 py-2">245345</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Product Table -->
+        <div class="overflow-x-auto mb-8 product-table">
+            <table class="min-w-full table-auto text-sm">
+                <thead>
+                    <tr class="bg-blue-50">
+                        <th class="border py-2 text-center font-semibold text-gray-600">Product Description</th>
+                        <th class="border py-2 text-center font-semibold text-gray-600">Quantity</th>
+                        <th class="border py-2 text-center font-semibold text-gray-600">Rate</th>
+                        <th class="border py-2 text-center font-semibold text-gray-600">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="border text-center py-2">RASI CO2 MIG Wire 0.8mm-16KG</td>
+                        <td class="border text-center py-2">5.00</td>
+                        <td class="border py-2 text-center">₹1,500.00</td>
+                        <td class="border py-2 text-center">₹7,500.00</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border text-center py-2">RASI CO2 MIG Wire 0.8mm-16KG</td>
+                        <td class="border text-center py-2">5.00</td>
+                        <td class="border py-2 text-center">₹1,500.00</td>
+                        <td class="border py-2 text-center">₹7,500.00</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border text-center py-2">RASI CO2 MIG Wire 0.8mm-16KG</td>
+                        <td class="border text-center py-2">5.00</td>
+                        <td class="border py-2 text-center">₹1,500.00</td>
+                        <td class="border py-2 text-center">₹7,500.00</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border text-center py-2">RASI CO2 MIG Wire 0.8mm-16KG</td>
+                        <td class="border text-center py-2">5.00</td>
+                        <td class="border py-2 text-center">₹1,500.00</td>
+                        <td class="border py-2 text-center">₹7,500.00</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border text-center py-2">RASI CO2 MIG Wire 0.8mm-16KG</td>
+                        <td class="border text-center py-2">5.00</td>
+                        <td class="border py-2 text-center">₹1,500.00</td>
+                        <td class="border py-2 text-center">₹7,500.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary -->
+        <div class="flex justify-between items-center mb-10 summary text-sm">
+            <div>
+                <p class="font-semibold text-base">Company's Bank Details:</p>
+                <p class="text-gray-500">KARUR VYSYA BANK</p>
+                <p class="text-gray-500">Branch & IFS Code: MOGAPPIR, KVBLO001263</p>
+                <p class="text-gray-500">Account No: 126312700000133</p>
+            </div>
+            <div class="text-right text-sm">
+                <table class="min-w-full text-right text-sm">
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold px-6 py-1">Subtotal</td>
+                            <td class="px-6 py-1">₹11,205.00</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold px-6 py-1">CGST @9%</td>
+                            <td class="px-6 py-1">₹1,008.45</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold px-6 py-1">SGST @9%</td>
+                            <td class="px-6 py-1">₹1,008.45</td>
+                        </tr>
+                        <tr class="text-base font-bold text-gray-800 bg-blue-50">
+                            <td class="px-6 py-1">Grand Total</td>
+                            <td class="px-6 py-1">₹13,222.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="flex justify-between items-center mt-6 border-t pt-4 footer">
+            <p class="text-gray-500 w-2/3">Rupees: <span class="font-bold text-wrap">Twenty Five Thousand Three
+                    Hundred and Fifty
+                    Twenty Five Thousand Three Hundred and Fifty
+                    Only</span></p>
+            <p class="text-base font-semibold text-gray-700">Owner / Proprietor</p>
+        </div>
+    </div>
+</body>
+
+</html>
