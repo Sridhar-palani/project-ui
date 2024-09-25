@@ -1,7 +1,6 @@
 import { AppContext } from "@/contexts/AppContext";
 import { useContext } from "react";
 import { FaIndustry } from "react-icons/fa";
-
 export const NavBar = () => {
   const { theme } = useContext(AppContext);
   return (

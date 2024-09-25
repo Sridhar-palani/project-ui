@@ -1,0 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
+
+export const useGetJobsById = (id) => {
+  const fetchJobs = async () => {
+    const response = await fetch(`http://localhost:5001/orders/${id}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch order");
+    }
+    return response.json();
+  };
+
+  return useQuery({
+    queryKey: ["jobs"],
+    queryFn: fetchJobs,
+  });
+};
