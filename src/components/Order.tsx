@@ -4,6 +4,8 @@ import { View } from "./View";
 import { useParams } from "react-router-dom";
 import { useGetJobsById } from "@/hooks/useGetorder";
 import { usePostOrder } from "@/hooks/usePostOrder";
+import { NavBar } from "./NavBar";
+import { Footer } from "./Footer";
 
 type OrderProps = {
   type: "Create" | "Update" | "View";
@@ -40,11 +42,11 @@ export const Order = ({ order, type }: OrderProps) => {
       )}
       {type === "Create" && (
         <div>
-          <button onClick={handleFormCreation}>Create</button>
-          <button>Cancel</button>
-          {/* create order form */}
-
+          {/* <button onClick={handleFormCreation}>Create</button>
+          <button>Cancel</button> */}
+          <NavBar/>
           <CreateForm />
+          <Footer/>
         </div>
       )}
 
@@ -55,8 +57,8 @@ export const Order = ({ order, type }: OrderProps) => {
         </div>
       )} */}
 
-      <input readOnly={type === "View"} />
-      <button></button>
+      {/* <input readOnly={type === "View"} />
+      <button></button> */}
     </div>
   );
 };
