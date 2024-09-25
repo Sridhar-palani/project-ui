@@ -15,9 +15,9 @@ export const Cards = () => {
         title="Create Orders"
         text="Add a new order"
         bg="bg-indigo-200"
-        buttonText="Add Order"
+        buttonText="Create order"
         buttonBg="bg-indigo-700"
-        buttonLink="/CreateOrder"
+        buttonLink="/createorder"
       />
     </div>
   );
