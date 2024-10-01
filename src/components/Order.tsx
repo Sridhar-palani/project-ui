@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { CreateForm } from "./CreateForm";
 import { View } from "./View";
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ type OrderProps = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Order = ({ order, type }: OrderProps) => {
   const { id } = useParams();
-  console.log(id);
+  // console.log(id);
   const { data, isLoading, isError, error } = useGetJobsById(id);
   const { mutate, isSuccess } = usePostOrder();
 

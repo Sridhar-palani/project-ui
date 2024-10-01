@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./Pages/Home";
 import { Jobs } from "../src/Pages/orders";
-import { Details } from "./Pages/details";
-import { CreateOrder } from "./Pages/CreateOrder";
 import { Order } from "./components/Order";
 
 function App() {

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 export const usePostOrder = () => {
   const postJobs = async () => {
-    const response = await fetch(`http://localhost:5001/orders`, {
+    const response = await fetch(`http://localhost:5000/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
