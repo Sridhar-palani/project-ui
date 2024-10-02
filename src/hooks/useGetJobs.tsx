@@ -1,8 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 
-export const useGetJobs = () => {
-  const fetchJobs = async () => {
-    const response = await fetch("http://localhost:5001/orders");
+// Define queryKey type as a tuple containing a string and a number
+type JobsQueryKey = [string, number];
+
+export const useGetJobs = (page: number) => {
+  const fetchJobs = async ({ queryKey }: QueryFunctionContext<JobsQueryKey>) => {
+    const [, page] = queryKey; // Destructure page from queryKey
+    const response = await fetch(`http://localhost:5001/orders?page=${page}`);
     if (!response.ok) {
       throw new Error("Failed to fetch jobs");
     }
@@ -10,7 +14,8 @@ export const useGetJobs = () => {
   };
 
   return useQuery({
-    queryKey: ["jobs"],
+    queryKey: ["jobs", page] as JobsQueryKey, // Cast queryKey to the correct type
     queryFn: fetchJobs,
   });
 };
+

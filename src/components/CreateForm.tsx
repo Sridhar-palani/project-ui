@@ -123,7 +123,6 @@ export const CreateForm = () => {
       });
     }
   };
-
   return (
     <div style={{ minHeight: "90vh" }}>
       <div className="grid grid-cols-3 ">
@@ -142,7 +141,7 @@ export const CreateForm = () => {
                         <FormItem>
                           <FormLabel>To</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
-                            <Textarea
+                            <Textarea 
                               placeholder="Enter buyer details"
                               {...field}
                             />
@@ -150,14 +149,15 @@ export const CreateForm = () => {
                         </FormItem>
                       )}
                     />
-                    <FormField
+                    <FormField 
+                     
                       control={form.control}
                       name="e_way_no"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>E way No</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
-                            <Input placeholder="Enter e way no" {...field} />
+                            <Input  placeholder="Enter e way no" {...field} />
                           </FormControl>
                         </FormItem>
                       )}

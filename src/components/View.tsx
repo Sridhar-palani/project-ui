@@ -1,126 +1,320 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import "../App.css";
 
+type MetaData = {
+  length: number;
+  width: number;
+};
 
-export const View = ({data})=>{
+type Item = {
+  meta_data: MetaData;
+  quantity: number;
+  material_value: number;
+  total_weight: number;
+  rate: number;
+  amount: number;
+  image: string;
+};
 
-    return(
-<div className="bg-gray-100 p-6">
-  <div className="text-black font-semibold max-w-full mx-auto">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+type OrderType = {
+  to: string;
+  e_way_no: string;
+  dc_no: number;
+  invoice_no: number;
+  date: string;
+  party_dc_no: number;
+  party_dc_date: string;
+  party_gstin: string;
+  hsn_code: number;
+  product_description: string;
+  items: Item[];
+  vehicle_no: string;
+  handling_charges: number;
+  cgst: number;
+  sgst: number;
+  net_total: number;
+  gross_total: number;
+  total_weight?: number;
+};
 
-  
-      <div className="bg-white border rounded-lg shadow-lg p-6">
-        <h3 className="text-xl font-semibold border-b-2 pb-2 mb-4">Bill Details</h3>
-        <div className="flex flex-col space-y-2">
-          <div className="flex justify-between py-1">
-            <span className="font-medium">TO:</span>
-            <span className="font-bold">{data.to}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">E-way No:</span>
-            <span className="font-bold">{data.e_way_no}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Date:</span>
-            <span className="font-bold">{data.date}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Party DC No:</span>
-            <span className="font-bold">{data.party_dc_no}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Party GSTIN:</span>
-            <span className="font-bold">{data.party_gstin}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">HSN Code:</span>
-            <span className="font-bold">{data.hsn_code}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Product Description:</span>
-            <span className="font-bold">{data.product_description}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Vehicle No:</span>
-            <span className="font-bold">{data.vehicle_no}</span>
-          </div>
-        </div>
-      </div>
+export const View = ({ data }: { data: OrderType }) => {
+  return (
+    <Tabs defaultValue="info" className="w-[50%]">
+      <TabsList className="w-[100%] bg-indigo-300 flex justify-around ">
+        <TabsTrigger className="hover:bg-white  text-black " value="info">
+          ORDER INFO
+        </TabsTrigger>
+        <TabsTrigger className="hover:bg-white  text-black " value="items">
+          ITEMS
+        </TabsTrigger>
+        <TabsTrigger className="hover:bg-white text-black " value="Amount">
+          COMMERCIAL INFO
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="info">
+        <Orderinfo data={data} />
+      </TabsContent>
+      <TabsContent value="items">
+        <Items data={data} />
+      </TabsContent>
+      <TabsContent value="Amount">
+        <Commercial data={data} />
+      </TabsContent>
+    </Tabs>
+  );
+};
 
-
-      <div className="bg-white border rounded-lg shadow-lg p-6">
-        <h3 className="text-xl font-semibold border-b-2 pb-2 mb-4">ITEMS</h3>
-        {data.items?.length > 0 ? (
-          <div className="space-y-4">
-            {data.items.map((orders, index) => (
-              <div className="border-b pb-2 mb-2" key={index}>
-                <h4 className="font-bold">Item No: {index + 1}</h4>
-                <div className="flex flex-col space-y-1">
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Quantity:</span>
-                    <span className="font-bold">{orders.quantity}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Length:</span>
-                    <span className="font-bold">{orders.meta_data?.length || 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Width:</span>
-                    <span className="font-bold">{orders.meta_data?.width || 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Material Value:</span>
-                    <span className="font-bold">{orders.material_value}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Rate:</span>
-                    <span className="font-bold">{orders.rate}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="font-medium">Image:</span>
-                    <span className="font-bold">
-                      {orders.image}
-                    </span>
-                  </div>
+const Items = ({ data }: { data: OrderType }) => {
+  return (
+    <>
+      {data.items?.length > 0 ? (
+        data.items.map((orders, index) => (
+          <Accordion key={index} type="single" collapsible>
+            <AccordionItem value="items">
+              <AccordionTrigger>
+                <h4 className="font-semibold">Item No: {index + 1}</h4>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="lables">
+                  <label className=" font-semibold p-2 flex-1 ">
+                    Quantity:
+                    <input
+                      className="border rounded w-full p-2 font-normal bg-transparent"
+                      type="text"
+                      value={orders.quantity}
+                      typeof="readOnly"
+                    />
+                  </label>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <span>No items available</span>
-        )}
-      </div>
-
-      <div className="bg-white border rounded-lg shadow-lg p-6">
-        <h3 className="text-xl font-semibold border-b-2 pb-2 mb-4">AMOUNTS</h3>
-        <div className="flex flex-col space-y-2">
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Handling Charges:</span>
-            <span className="font-bold">{data.handling_charges}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Net Total:</span>
-            <span className="font-bold">{data.net_total}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">CGST:</span>
-            <span className="font-bold">{data.cgst}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">SGST:</span>
-            <span className="font-bold">{data.sgst}</span>
-          </div>
-          <div className="flex justify-between py-1">
-            <span className="font-medium">Total Weight:</span>
-            <span className="font-bold">{data.total_weight}</span>
-          </div>
-          <div className="flex justify-between py-1 border-t mt-2">
-            <span className="font-medium">Gross Total:</span>
-            <span className="font-bold">{data.gross_total}</span>
-          </div>
+                <div className="lables">
+                  <label className="  font-semibold flex-1 p-2">
+                    Length:
+                    <input
+                      type="text"
+                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      value={orders.meta_data?.length || "N/A"}
+                      typeof="readOnly"
+                    />
+                  </label>
+                </div>
+                <div className="lables">
+                  <label className="  font-semibold flex-1 p-2">
+                    Width:
+                    <input
+                      type="text"
+                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      value={orders.meta_data?.width || "N/A"}
+                      typeof="readOnly"
+                    />
+                  </label>
+                </div>
+                <div className="lables">
+                  <label className="  font-semibold flex-1 p-2">
+                    Material_Value:
+                    <input
+                      type="text"
+                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      value={orders.material_value}
+                      typeof="readOnly"
+                    />
+                  </label>
+                </div>
+                <div className="lables">
+                  <label className="  font-semibold flex-1 p-2">
+                    Rate:
+                    <input
+                      type="text"
+                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      value={orders.rate}
+                      typeof="readOnly"
+                    />
+                  </label>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="font-medium">Image:</span>
+                  <span className="font-bold">{orders.image}</span>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))
+      ) : (
+        <span>No items available</span>
+      )}
+    </>
+  );
+};
+const Orderinfo = ({ data }: { data: OrderType }) => {
+  const date = new Date(data.date);
+  const formattedDate = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return (
+    <>
+      <div>
+        <div className="lables">
+          <label className=" font-semibold flex-1 p-2">
+            To:
+            <textarea
+              rows={3}
+              className="border rounded w-full p-2 font-normal bg-transparent"
+              value={data.to}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className=" font-semibold p-2 flex-1 ">
+            E-way No:
+            <input
+              className="border rounded w-full p-2 font-normal bg-transparent"
+              type="text"
+              value={data.e_way_no}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className=" font-semibold flex-1 p-2">
+            Date:
+            <input
+              type="text"
+              className="border rounded p-2 w-full font-normal bg-transparent"
+              value={formattedDate}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className="font-semibold flex-1 p-2">
+            Party DC No:
+            <input
+              type="text"
+              className="border rounded p-2 w-full font-normal bg-transparent"
+              value={data.dc_no}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className="font-semibold flex-1 p-2">
+            Party GSTIN:
+            <input
+              type="text"
+              className="border rounded p-2 w-full font-normal bg-transparent"
+              value={data.party_gstin}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className="font-semibold flex-1 p-2">
+            HSN Code:
+            <input
+              type="text"
+              className="border rounded p-2 w-full font-normal bg-transparent"
+              value={data.hsn_code}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className="font-semibold flex-1 p-2">
+            Product Description:
+            <input
+              type="text"
+              className="border rounded p-2  w-full font-normal bg-transparent"
+              value={data.product_description}
+              typeof="readOnly"
+            />
+          </label>
+        </div>
+        <div className="lables">
+          <label className="font-semibold flex-1 p-2">
+            Vehicle No:
+            <input
+              type="text"
+              className="border rounded p-2 w-full font-normal bg-transparent"
+              value={data.vehicle_no}
+              typeof="readOnly"
+            />
+          </label>
         </div>
       </div>
+    </>
+  );
+};
 
-    </div>
-  </div>
-</div>
-)}
+const Commercial = ({ data }: { data: OrderType }) => {
+  return (
+    <>
+      <div className="lables">
+        <label className=" font-semibold p-2 flex-1 ">
+          Handling Charges:
+          <input
+            className="border rounded w-full p-2 font-normal bg-transparent"
+            type="text"
+            value={data.handling_charges}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
+        <label className="  font-semibold flex-1 p-2">
+          Net Total:
+          <input
+            type="text"
+            className="border rounded p-2 w-full font-normal bg-transparent"
+            value={data.net_total}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
+        <label className="  font-semibold flex-1 p-2">
+          CGST:
+          <input
+            type="text"
+            className="border rounded p-2 w-full font-normal bg-transparent"
+            value={data.cgst}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
+        <label className="  font-semibold flex-1 p-2">
+          SGST:
+          <input
+            type="text"
+            className="border rounded p-2 w-full font-normal bg-transparent"
+            value={data.sgst}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
+        <label className="  font-semibold flex-1 p-2">
+          Total Weight:
+          <input
+            type="text"
+            className="border rounded p-2 w-full font-normal bg-transparent"
+            value={data.total_weight}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="flex justify-between py-1 border-t m-5 text-lg">
+        <span className="font-medium">Gross Total:</span>
+        <span className="font-bold">{data.gross_total}</span>
+      </div>
+    </>
+  );
+};

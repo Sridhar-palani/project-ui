@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import { CreateForm } from "./CreateForm";
-import { View } from "./View";
-import { useParams } from "react-router-dom";
-import { useGetJobsById } from "@/hooks/useGetorder";
 import { usePostOrder } from "@/hooks/usePostOrder";
 import { NavBar } from "./NavBar";
 import { Footer } from "./Footer";
+import { Details } from "@/Pages/details";
 
 type OrderProps = {
   type: "Create" | "Update" | "View";
@@ -14,9 +12,6 @@ type OrderProps = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Order = ({ order, type }: OrderProps) => {
-  const { id } = useParams();
-  console.log(id);
-  const { data, isLoading, isError, error } = useGetJobsById(id);
   const { mutate, isSuccess } = usePostOrder();
 
   const handleFormCreation = () => {
@@ -32,21 +27,17 @@ export const Order = ({ order, type }: OrderProps) => {
   return (
     <div>
       {type === "View" && (
-        <div>
-          <button>Generate Invoice</button>
-          <button>Generate DC</button>
-          <button>Update Order</button>
-
-          <View data={data} />
-        </div>
+        <>
+          <Details/>
+        </>
       )}
       {type === "Create" && (
         <div>
           {/* <button onClick={handleFormCreation}>Create</button>
           <button>Cancel</button> */}
-          <NavBar/>
+          <NavBar />
           <CreateForm />
-          <Footer/>
+          <Footer />
         </div>
       )}
 

@@ -9,7 +9,7 @@ const queryClinet = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClinet}>
+    <QueryClientProvider  client={queryClinet}>
       <App />
       {import.meta.env.MODE === "development" && (
         <ReactQueryDevtools

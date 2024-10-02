@@ -1,6 +1,7 @@
 import { AppContext } from "@/contexts/AppContext";
 import { useContext } from "react";
 import { FaIndustry } from "react-icons/fa";
+import { Link } from "react-router-dom";
 export const NavBar = () => {
   const { theme } = useContext(AppContext);
   return (
@@ -13,10 +14,14 @@ export const NavBar = () => {
           <div className="font-bold">Karthick Industries</div>
         </div>
         <div className="flex gap-5">
-          <button className="bg-slate-950 font-bold px-2 rounded-md">
+          <Link to="/">
+          <button className=" font-bold text-white px-2 rounded-md">
             Home
-          </button>
-          <button className=" font-bold px-2 rounded-md">Orders</button>
+          </button></Link>
+          <Link to ="/orders">
+
+          <button className=" font-bold text-white px-2 rounded-md">Orders</button>
+          </Link>
           {/* <button className=" font-bold px-2 rounded-md">About</button> */}
         </div>
       </div>

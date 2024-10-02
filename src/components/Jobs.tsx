@@ -2,7 +2,7 @@ import { useGetJobs } from "@/hooks/useGetJobs";
 import { JobsCard } from "./JobsCard";
 
 export const Jobs = () => {
-  const { data, isLoading, isError, error } = useGetJobs();
+  const { data, isLoading, isError, error } = useGetJobs(1);
 
   return (
     <div className="bg-slate-200 py-5">
