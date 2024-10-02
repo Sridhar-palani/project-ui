@@ -15,7 +15,7 @@ type OrderProps = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Order = ({ order, type }: OrderProps) => {
   const { id } = useParams();
-  // console.log(id);
+  console.log(id);
   const { data, isLoading, isError, error } = useGetJobsById(id);
   const { mutate, isSuccess } = usePostOrder();
 
@@ -40,15 +40,13 @@ export const Order = ({ order, type }: OrderProps) => {
           <View data={data} />
         </div>
       )}
-      {type === "Create" && (
+      {/* {type === "Create" && (
         <div>
-          {/* <button onClick={handleFormCreation}>Create</button>
-          <button>Cancel</button> */}
           <NavBar/>
           <CreateForm />
           <Footer/>
         </div>
-      )}
+      )} */}
 
       {/* {type === "Update" && (
         <div>
