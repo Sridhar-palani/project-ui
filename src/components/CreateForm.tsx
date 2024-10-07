@@ -31,8 +31,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "./ui/textarea";
 import { Check, ChevronsUpDown, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePostOrder } from "@/hooks/usePostOrder";
 
 export const CreateForm = () => {
+  const { mutate, isLoading, error } = usePostOrder();
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState([
     {
@@ -97,6 +99,7 @@ export const CreateForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    mutate(values)
     console.log(values);
   }
 

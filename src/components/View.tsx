@@ -78,14 +78,14 @@ const Items = ({ data }: { data: OrderType }) => {
           <Accordion key={index} type="single" collapsible>
             <AccordionItem value="items">
               <AccordionTrigger>
-                <h4 className="font-semibold">Item No: {index + 1}</h4>
+                <h4 className="font-bold">Item No: {index + 1}</h4>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="lables">
                   <label className=" font-semibold p-2 flex-1 ">
                     Quantity:
                     <input
-                      className="border rounded w-full p-2 font-normal bg-transparent"
+                      className="border rounded w-full p-2 font-bold bg-transparent"
                       type="text"
                       value={orders.quantity}
                       typeof="readOnly"
@@ -97,7 +97,7 @@ const Items = ({ data }: { data: OrderType }) => {
                     Length:
                     <input
                       type="text"
-                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      className="border rounded p-2 w-full font-bold bg-transparent"
                       value={orders.meta_data?.length || "N/A"}
                       typeof="readOnly"
                     />
@@ -108,7 +108,7 @@ const Items = ({ data }: { data: OrderType }) => {
                     Width:
                     <input
                       type="text"
-                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      className="border rounded p-2 w-full font-bold bg-transparent"
                       value={orders.meta_data?.width || "N/A"}
                       typeof="readOnly"
                     />
@@ -119,7 +119,7 @@ const Items = ({ data }: { data: OrderType }) => {
                     Material_Value:
                     <input
                       type="text"
-                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      className="border rounded p-2 w-full font-bold bg-transparent"
                       value={orders.material_value}
                       typeof="readOnly"
                     />
@@ -130,7 +130,7 @@ const Items = ({ data }: { data: OrderType }) => {
                     Rate:
                     <input
                       type="text"
-                      className="border rounded p-2 w-full font-normal bg-transparent"
+                      className="border rounded p-2 w-full font-bold bg-transparent"
                       value={orders.rate}
                       typeof="readOnly"
                     />
@@ -165,7 +165,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             To:
             <textarea
               rows={3}
-              className="border rounded w-full p-2 font-normal bg-transparent"
+              className="border rounded w-full p-2 font-bold bg-transparent"
               value={data.to}
               typeof="readOnly"
             />
@@ -175,7 +175,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
           <label className=" font-semibold p-2 flex-1 ">
             E-way No:
             <input
-              className="border rounded w-full p-2 font-normal bg-transparent"
+              className="border rounded w-full p-2 font-bold bg-transparent"
               type="text"
               value={data.e_way_no}
               typeof="readOnly"
@@ -187,7 +187,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             Date:
             <input
               type="text"
-              className="border rounded p-2 w-full font-normal bg-transparent"
+              className="border rounded p-2 w-full font-bold bg-transparent"
               value={formattedDate}
               typeof="readOnly"
             />
@@ -198,7 +198,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             Party DC No:
             <input
               type="text"
-              className="border rounded p-2 w-full font-normal bg-transparent"
+              className="border rounded p-2 w-full font-bold bg-transparent"
               value={data.dc_no}
               typeof="readOnly"
             />
@@ -209,7 +209,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             Party GSTIN:
             <input
               type="text"
-              className="border rounded p-2 w-full font-normal bg-transparent"
+              className="border rounded p-2 w-full font-bold bg-transparent"
               value={data.party_gstin}
               typeof="readOnly"
             />
@@ -220,7 +220,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             HSN Code:
             <input
               type="text"
-              className="border rounded p-2 w-full font-normal bg-transparent"
+              className="border rounded p-2 w-full font-bold bg-transparent"
               value={data.hsn_code}
               typeof="readOnly"
             />
@@ -231,7 +231,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             Product Description:
             <input
               type="text"
-              className="border rounded p-2  w-full font-normal bg-transparent"
+              className="border rounded p-2  w-full font-bold bg-transparent"
               value={data.product_description}
               typeof="readOnly"
             />
@@ -242,7 +242,7 @@ const Orderinfo = ({ data }: { data: OrderType }) => {
             Vehicle No:
             <input
               type="text"
-              className="border rounded p-2 w-full font-normal bg-transparent"
+              className="border rounded p-2 w-full font-bold bg-transparent"
               value={data.vehicle_no}
               typeof="readOnly"
             />
@@ -260,7 +260,7 @@ const Commercial = ({ data }: { data: OrderType }) => {
         <label className=" font-semibold p-2 flex-1 ">
           Handling Charges:
           <input
-            className="border rounded w-full p-2 font-normal bg-transparent"
+            className="border rounded w-full p-2 font-bold bg-transparent"
             type="text"
             value={data.handling_charges}
             typeof="readOnly"
@@ -272,7 +272,7 @@ const Commercial = ({ data }: { data: OrderType }) => {
           Net Total:
           <input
             type="text"
-            className="border rounded p-2 w-full font-normal bg-transparent"
+            className="border rounded p-2 w-full font-bold bg-transparent"
             value={data.net_total}
             typeof="readOnly"
           />
@@ -283,7 +283,7 @@ const Commercial = ({ data }: { data: OrderType }) => {
           CGST:
           <input
             type="text"
-            className="border rounded p-2 w-full font-normal bg-transparent"
+            className="border rounded p-2 w-full font-bold bg-transparent"
             value={data.cgst}
             typeof="readOnly"
           />
@@ -294,7 +294,7 @@ const Commercial = ({ data }: { data: OrderType }) => {
           SGST:
           <input
             type="text"
-            className="border rounded p-2 w-full font-normal bg-transparent"
+            className="border rounded p-2 w-full font-bold bg-transparent"
             value={data.sgst}
             typeof="readOnly"
           />
@@ -305,7 +305,7 @@ const Commercial = ({ data }: { data: OrderType }) => {
           Total Weight:
           <input
             type="text"
-            className="border rounded p-2 w-full font-normal bg-transparent"
+            className="border rounded p-2 w-full font-bold bg-transparent"
             value={data.total_weight}
             typeof="readOnly"
           />
