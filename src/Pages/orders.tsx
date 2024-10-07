@@ -26,8 +26,8 @@ export const Jobs = () => {
         {/* Add a search input field */}
         <input
           type="search"
-          value={searchQuery}
-          onChange={handleSearch}
+          // value={searchQuery}
+          // onChange={handleSearch}
           placeholder="Search orders..."
           className="w-full py-2 pl-10 text-sm text-white"
         />
