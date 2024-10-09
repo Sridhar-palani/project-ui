@@ -9,7 +9,6 @@ interface Job {
   dc_no: number;
   to: string;
   date: string;
-  // Add other relevant fields here
 }
 
 // Define the structure of the API response

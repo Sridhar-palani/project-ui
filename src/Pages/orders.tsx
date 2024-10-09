@@ -5,6 +5,7 @@ import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import debounce from "lodash.debounce";
 import { OrdersListing } from "@/components/OrderListing";
+import { Input } from "@/components/ui/input";
 
 export const Jobs = () => {
   const [page, setPage] = useState(1); // Track current page number
@@ -54,13 +55,21 @@ export const Jobs = () => {
           Browse Orders
         </div>
         {/* Search Input Field */}
-        <input
+        {/* <input
           type="search"
           aria-label="Search orders"
           value={searchInput}
           onChange={handleSearchChange}
           placeholder="Search orders..."
           className="w-full max-w-5xl py-2 pl-10 text-sm text-black bg-gray-200 rounded-md mb-4"
+        /> */}
+        <Input
+          type="search"
+          aria-label="Search orders"
+          value={searchInput}
+          onChange={handleSearchChange}
+          placeholder="Search orders..."
+          className="w-full max-w-5xl py-2 pl-10 text-sm text-black bg-white rounded-md mb-4"
         />
         {isLoading && <div className="m-auto">Loading...</div>}
         {isError && (
