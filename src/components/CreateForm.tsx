@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +27,31 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 
+interface Product {
+  product_length: number;
+  product_width: number;
+  qty: number;
+  rate: number;
+}
+
+interface FormValues {
+  to: string;
+  e_way_no: number;
+  party_dc_no: number;
+  party_dc_date: Date;
+  party_gstin: string;
+  our_dc_no: number;
+  hsn_code: string;
+  product_description: string;
+  products: Product[];
+  material_value: number;
+  total_weight: number;
+  vehicle_no: string;
+  handling_charges?: number;
+  cgst: number;
+  sgst: number;
+}
+
 export const CreateForm = () => {
   const [open, setOpen] = useState(false);
 
@@ -38,141 +61,69 @@ export const CreateForm = () => {
     { label: "73084000", value: "73084000" },
   ] as const;
 
-  const productSchema = z.object({
-    product_description: z
-      .string({
-        invalid_type_error: "Product description must be a string",
-        required_error: "Product description is required",
-      })
-      .min(1, "Product description must be at least 1 character"),
-    product_length: z
-      .number({
-        invalid_type_error: "Product length must be a number",
-        required_error: "Product length is required",
-      })
-      .min(0, "Product length must be greater than or equal to 0"),
-    product_width: z
-      .number({
-        invalid_type_error: "Product width must be a number",
-        required_error: "Product width is required",
-      })
-      .min(0, "Product width must be greater than or equal to 0"),
-    qty: z
-      .number({
-        invalid_type_error: "Quantity must be a number",
-        required_error: "Quantity is required",
-      })
-      .min(0, "Quantity must be greater than or equal to 0"),
-    rate: z.number({
-      invalid_type_error: "Rate must be a number",
-      required_error: "Rate is required",
-    }),
-  });
-
-  const formSchema = z.object({
-    to: z
-      .string()
-      .min(2, "To is required")
-      .max(500, "To must be less than or equal to 500 characters"),
-    e_way_no: z.number({
-      invalid_type_error: "E-way no must be a number",
-      required_error: "E-way no is required",
-    }),
-    party_dc_no: z.number({
-      invalid_type_error: "Party DC no must be a number",
-      required_error: "Party DC no is required",
-    }),
-    party_dc_date: z.date({
-      invalid_type_error: "Party DC date must be a valid date",
-      required_error: "Party DC date is required",
-    }),
-    party_gstin: z
-      .string({
-        invalid_type_error: "Party GSTIN must be a string",
-        required_error: "Party GSTIN is required",
-      })
-      .min(1, "Party GSTIN is required"),
-    our_dc_no: z
-      .string({
-        invalid_type_error: "Our DC no must be a string",
-        required_error: "Our DC no is required",
-      })
-      .min(1, "Our DC no is required"),
-    hsn_code: z
-      .string({
-        invalid_type_error: "HSN code must be a string",
-        required_error: "HSN code is required",
-      })
-      .min(1, "HSN code is required"),
-    products: z.array(productSchema).min(1, "At least one product is required"),
-    material_value: z.number({
-      invalid_type_error: "Material value must be a number",
-      required_error: "Material value is required",
-    }),
-    total_weight: z.number({
-      invalid_type_error: "Total weight must be a number",
-      required_error: "Total weight is required",
-    }),
-    vehicle_no: z.string().min(1, "Vehicle no is required"),
-    handling_charges: z.number({
-      invalid_type_error: "Handling charges must be a number",
-    }),
-    cgst: z.number({
-      invalid_type_error: "CGST must be a number",
-      required_error: "CGST is required",
-    }),
-    sgst: z.number({
-      invalid_type_error: "SGST must be a number",
-      required_error: "SGST is required",
-    }),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
     defaultValues: {
       to: "",
-      e_way_no: "",
-      party_dc_no: "",
+      e_way_no: 0,
+      party_dc_no: 0,
       party_dc_date: new Date(),
       party_gstin: "",
-      our_dc_no: "",
+      our_dc_no: 0,
       hsn_code: "",
+      product_description: "",
       products: [
         {
-          product_description: "",
-          product_length: "",
-          product_width: "",
-          qty: "",
-          rate: "",
+          product_length: 0,
+          product_width: 0,
+          qty: 0,
+          rate: 0,
         },
       ],
-      material_value: "",
-      total_weight: "",
+      material_value: 0,
+      total_weight: 0,
       vehicle_no: "",
-      handling_charges: "",
-      cgst: "",
-      sgst: "",
+      handling_charges: 0,
+      cgst: 0,
+      sgst: 0,
     },
   });
 
-  const { control, handleSubmit, setValue } = form;
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    register,
+    formState: { errors },
+  } = form;
+
+  const validateNumber = (minValue = 0) => {
+    return (value: number | undefined) => {
+      if (value === undefined) {
+        return "Value is required";
+      }
+      if (isNaN(value)) {
+        return "Must be a number";
+      }
+      if (value < minValue) {
+        return `Must be greater than or equal to ${minValue}`;
+      }
+      return true;
+    };
+  };
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "products",
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = (values: FormValues) => {
     console.log(values);
-  }
+  };
 
   return (
     <div style={{ minHeight: "90vh" }}>
       <div className="flex flex-col items-center">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-[60%]"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-[60%]">
             <Tabs
               defaultValue="buyerinfo"
               className="flex flex-col p-10 mt-5 border border-grey"
@@ -192,18 +143,29 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="to"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>To</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Textarea
                           placeholder="Enter buyer details"
-                          {...field}
+                          {...register("to", {
+                            required: "To is required",
+                            minLength: {
+                              value: 2,
+                              message: "To must be at least 2 characters",
+                            },
+                            maxLength: {
+                              value: 500,
+                              message:
+                                "To must be less than or equal to 500 characters",
+                            },
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.to && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.to.message}
                         </p>
                       )}
                     </FormItem>
@@ -212,22 +174,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="e_way_no"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>E way No</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
-                          type="number"
                           placeholder="Enter e way no"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("e_way_no", {
+                            required: "E-way no is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(1),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.e_way_no && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.e_way_no.message}
                         </p>
                       )}
                     </FormItem>
@@ -236,21 +198,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="party_dc_no"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Party DC No</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter party dc no"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("party_dc_no", {
+                            required: "Party DC no is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(1),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.party_dc_no && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.party_dc_no.message}
                         </p>
                       )}
                     </FormItem>
@@ -259,7 +222,7 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="party_dc_date"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Party DC Date</FormLabel>
                       <Popover>
@@ -269,11 +232,12 @@ export const CreateForm = () => {
                               variant={"outline"}
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !form.watch("party_dc_date") &&
+                                  "text-muted-foreground"
                               )}
                             >
-                              {field.value ? (
-                                format(field.value, "PPP")
+                              {form.watch("party_dc_date") ? (
+                                format(form.watch("party_dc_date"), "PPP")
                               ) : (
                                 <span>Pick a date</span>
                               )}
@@ -284,24 +248,22 @@ export const CreateForm = () => {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value}
+                            selected={form.watch("party_dc_date")}
                             onSelect={(date) => {
                               if (date) {
-                                setValue("party_dc_date", date);
+                                setValue("party_dc_date", date, {
+                                  shouldValidate: true,
+                                });
                               }
                               setOpen(false);
                             }}
-                            // disabled={(date) =>
-                            //   date > new Date() ||
-                            //   date < new Date("1900-01-01")
-                            // }
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
-                      {fieldState.error && (
+                      {errors.party_dc_date && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.party_dc_date.message}
                         </p>
                       )}
                     </FormItem>
@@ -310,15 +272,24 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="party_gstin"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Party GSTIN</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
-                        <Input placeholder="Enter party gstin" {...field} />
+                        <Input
+                          placeholder="Enter party gstin"
+                          {...register("party_gstin", {
+                            required: "Party GSTIN is required",
+                            minLength: {
+                              value: 1,
+                              message: "Party GSTIN is required",
+                            },
+                          })}
+                        />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.party_gstin && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.party_gstin.message}
                         </p>
                       )}
                     </FormItem>
@@ -327,15 +298,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="our_dc_no"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Our DC No</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
-                        <Input placeholder="Enter our dc no" {...field} />
+                        <Input
+                          placeholder="Enter our dc no"
+                          {...register("our_dc_no", {
+                            required: "Our DC no is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(0),
+                          })}
+                        />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.our_dc_no && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.our_dc_no.message}
                         </p>
                       )}
                     </FormItem>
@@ -344,7 +322,7 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="hsn_code"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>HSN Code</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
@@ -356,12 +334,14 @@ export const CreateForm = () => {
                                 role="combobox"
                                 className={cn(
                                   "w-full justify-between",
-                                  !field.value && "text-muted-foreground"
+                                  !form.watch("hsn_code") &&
+                                    "text-muted-foreground"
                                 )}
                               >
-                                {field.value
+                                {form.watch("hsn_code")
                                   ? hsn_code.find(
-                                      (hc) => hc.value === field.value
+                                      (hc) =>
+                                        hc.value === form.watch("hsn_code")
                                     )?.label
                                   : "Select HSN Code"}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -381,14 +361,6 @@ export const CreateForm = () => {
                                         setOpen(false);
                                       }}
                                     >
-                                      {/* <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              hsn_code.value === field.value
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                            )}
-                                          /> */}
                                       {hc.label}
                                     </CommandItem>
                                   ))}
@@ -398,9 +370,9 @@ export const CreateForm = () => {
                           </PopoverContent>
                         </Popover>
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.hsn_code && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.hsn_code.message}
                         </p>
                       )}
                     </FormItem>
@@ -408,47 +380,57 @@ export const CreateForm = () => {
                 />
               </TabsContent>
               <TabsContent value="productinfo">
+                <FormField
+                  control={form.control}
+                  name={`product_description`}
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Product Description</FormLabel>
+                      <FormControl style={{ marginBottom: 16 }}>
+                        <Input
+                          placeholder="Enter product details"
+                          {...register("product_description", {
+                            required: "Product description is required",
+                            minLength: {
+                              value: 1,
+                              message:
+                                "Product description must be at least 1 character",
+                            },
+                          })}
+                        />
+                      </FormControl>
+                      {errors.product_description && (
+                        <p className="text-red-500 text-right">
+                          {errors.product_description?.message}
+                        </p>
+                      )}
+                    </FormItem>
+                  )}
+                />
                 {fields.map((field, index) => (
-                  // {products.map((_product, index) => (
                   <div key={field.id} className="border p-4 mb-4">
                     <FormField
                       control={form.control}
-                      name={`products.${index}.product_description`}
-                      render={({ field, fieldState }) => (
-                        <FormItem>
-                          <FormLabel>Product Description</FormLabel>
-                          <FormControl style={{ marginBottom: 16 }}>
-                            <Input
-                              placeholder="Enter product details"
-                              {...field}
-                            />
-                          </FormControl>
-                          {fieldState.error && (
-                            <p className="text-red-500 text-right">
-                              {fieldState.error.message}
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
                       name={`products.${index}.product_length`}
-                      render={({ field, fieldState }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Product Length</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter product length"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
+                              {...register(
+                                `products.${index}.product_length` as const,
+                                {
+                                  required: "Product length is required",
+                                  valueAsNumber: true,
+                                  validate: validateNumber(1),
+                                }
+                              )}
                             />
                           </FormControl>
-                          {fieldState.error && (
+                          {errors.products?.[index]?.product_length && (
                             <p className="text-red-500 text-right">
-                              {fieldState.error.message}
+                              {errors.products[index]?.product_length?.message}
                             </p>
                           )}
                         </FormItem>
@@ -457,21 +439,25 @@ export const CreateForm = () => {
                     <FormField
                       control={form.control}
                       name={`products.${index}.product_width`}
-                      render={({ field, fieldState }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Product Width</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter product width"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
+                              {...register(
+                                `products.${index}.product_width` as const,
+                                {
+                                  required: "Product width is required",
+                                  valueAsNumber: true,
+                                  validate: validateNumber(1),
+                                }
+                              )}
                             />
                           </FormControl>
-                          {fieldState.error && (
+                          {errors.products?.[index]?.product_width && (
                             <p className="text-red-500 text-right">
-                              {fieldState.error.message}
+                              {errors.products[index]?.product_width?.message}
                             </p>
                           )}
                         </FormItem>
@@ -480,21 +466,22 @@ export const CreateForm = () => {
                     <FormField
                       control={form.control}
                       name={`products.${index}.qty`}
-                      render={({ field, fieldState }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Quantity</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter quantity"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
+                              {...register(`products.${index}.qty` as const, {
+                                required: "Quantity is required",
+                                valueAsNumber: true,
+                                validate: validateNumber(1),
+                              })}
                             />
                           </FormControl>
-                          {fieldState.error && (
+                          {errors.products?.[index]?.qty && (
                             <p className="text-red-500 text-right">
-                              {fieldState.error.message}
+                              {errors.products[index]?.qty?.message}
                             </p>
                           )}
                         </FormItem>
@@ -503,21 +490,22 @@ export const CreateForm = () => {
                     <FormField
                       control={form.control}
                       name={`products.${index}.rate`}
-                      render={({ field, fieldState }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Rate</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter rate"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
+                              {...register(`products.${index}.rate` as const, {
+                                required: "Rate is required",
+                                valueAsNumber: true,
+                                validate: validateNumber(0),
+                              })}
                             />
                           </FormControl>
-                          {fieldState.error && (
+                          {errors.products?.[index]?.rate && (
                             <p className="text-red-500 text-right">
-                              {fieldState.error.message}
+                              {errors.products[index]?.rate?.message}
                             </p>
                           )}
                         </FormItem>
@@ -543,11 +531,10 @@ export const CreateForm = () => {
                     className="p-5 m-2"
                     onClick={() =>
                       append({
-                        product_description: "",
-                        product_length: "",
-                        product_width: "",
-                        qty: "",
-                        rate: "",
+                        product_length: 0,
+                        product_width: 0,
+                        qty: 0,
+                        rate: 0,
                       })
                     }
                     type="button"
@@ -561,21 +548,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="material_value"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Material Value</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter material value"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("material_value", {
+                            required: "Material value is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(0),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.material_value && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.material_value.message}
                         </p>
                       )}
                     </FormItem>
@@ -584,21 +572,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="total_weight"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Total Weight</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter total weight"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("total_weight", {
+                            required: "Total weight is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(0),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.total_weight && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.total_weight.message}
                         </p>
                       )}
                     </FormItem>
@@ -607,15 +596,28 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="vehicle_no"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Vehicle No</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
-                        <Input placeholder="Enter vehicle no" {...field} />
+                        <Input
+                          placeholder="Enter vehicle no"
+                          {...register(
+                            "vehicle_no",
+
+                            {
+                              required: "Vehicle no is required",
+                              minLength: {
+                                value: 1,
+                                message: "Vehicle no is required",
+                              },
+                            }
+                          )}
+                        />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.vehicle_no && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.vehicle_no.message}
                         </p>
                       )}
                     </FormItem>
@@ -626,21 +628,21 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="handling_charges"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Handling charges</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter handling charges"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("handling_charges", {
+                            valueAsNumber: true,
+                            validate: validateNumber(0),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.handling_charges && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.handling_charges.message}
                         </p>
                       )}
                     </FormItem>
@@ -649,21 +651,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="cgst"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>CGST</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter cgst"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("cgst", {
+                            required: "CGST is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(1),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.cgst && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.cgst.message}
                         </p>
                       )}
                     </FormItem>
@@ -672,21 +675,22 @@ export const CreateForm = () => {
                 <FormField
                   control={form.control}
                   name="sgst"
-                  render={({ field, fieldState }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>SGST</FormLabel>
                       <FormControl style={{ marginBottom: 16 }}>
                         <Input
                           placeholder="Enter sgst"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          {...register("sgst", {
+                            required: "SGST is required",
+                            valueAsNumber: true,
+                            validate: validateNumber(1),
+                          })}
                         />
                       </FormControl>
-                      {fieldState.error && (
+                      {errors.sgst && (
                         <p className="text-red-500 text-right">
-                          {fieldState.error.message}
+                          {errors.sgst.message}
                         </p>
                       )}
                     </FormItem>
