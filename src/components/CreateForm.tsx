@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,34 +26,38 @@ import { CalendarIcon, ChevronsUpDown, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
+import { usePostOrder } from "@/hooks/user/postorder/usePostOrder";
+import { useAppContext } from "@/contexts/AppContext";
 
-interface Product {
-  product_length: number;
-  product_width: number;
-  qty: number;
+export type Product = {
+  length: number;
+  width: number;
+  quantity: number;
   rate: number;
-}
+};
 
-interface FormValues {
+export type FormValues = {
   to: string;
   e_way_no: number;
   party_dc_no: number;
+  date: Date;
   party_dc_date: Date;
   party_gstin: string;
   our_dc_no: number;
   hsn_code: string;
   product_description: string;
-  products: Product[];
+  items: Product[];
   material_value: number;
   total_weight: number;
   vehicle_no: string;
   handling_charges?: number;
   cgst: number;
   sgst: number;
-}
+};
 
 export const CreateForm = () => {
-  const { mutate, isLoading, error } = usePostOrder();
+  const { showToast } = useAppContext();
+  const { mutate, isSuccess,isError,message,errorMessage } = usePostOrder();
   const [open, setOpen] = useState(false);
 
   const hsn_code = [
@@ -61,22 +65,32 @@ export const CreateForm = () => {
     { label: "997212", value: "997212" },
     { label: "73084000", value: "73084000" },
   ] as const;
+  
+  useEffect(() => {
+    if (isSuccess) {
+      showToast({ message: "Order Created!", type: "SUCCESS" });
+    }
+    if (isError) {
+      showToast({ message: "Order Creation Failed!", type: "ERROR" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError, isSuccess]);
 
   const form = useForm<FormValues>({
     defaultValues: {
       to: "",
       e_way_no: 0,
       party_dc_no: 0,
+      date:new Date(),
       party_dc_date: new Date(),
       party_gstin: "",
-      our_dc_no: 0,
       hsn_code: "",
       product_description: "",
-      products: [
+      items: [
         {
-          product_length: 0,
-          product_width: 0,
-          qty: 0,
+          length: 0,
+          width: 0,
+          quantity: 0,
           rate: 0,
         },
       ],
@@ -114,10 +128,11 @@ export const CreateForm = () => {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "products",
+    name: "items",
   });
   const onSubmit = (values: FormValues) => {
     console.log(values);
+    mutate(values);
   };
   return (
     <div style={{ minHeight: "90vh" }}>
@@ -140,6 +155,56 @@ export const CreateForm = () => {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="buyerinfo">
+              <FormField
+                  control={form.control}
+                  name="date"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl style={{ marginBottom: 16 }}>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !form.watch("date") &&
+                                  "text-muted-foreground"
+                              )}
+                            >
+                              {form.watch("date") ? (
+                                format(form.watch("date"), "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={form.watch("date")}
+                            onSelect={(date) => {
+                              if (date) {
+                                setValue("date", date, {
+                                  shouldValidate: true,
+                                });
+                              }
+                              setOpen(false);
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      {errors.date && (
+                        <p className="text-red-500 text-right">
+                          {errors.date.message}
+                        </p>
+                      )}
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="to"
@@ -295,30 +360,7 @@ export const CreateForm = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="our_dc_no"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Our DC No</FormLabel>
-                      <FormControl style={{ marginBottom: 16 }}>
-                        <Input
-                          placeholder="Enter our dc no"
-                          {...register("our_dc_no", {
-                            required: "Our DC no is required",
-                            valueAsNumber: true,
-                            validate: validateNumber(0),
-                          })}
-                        />
-                      </FormControl>
-                      {errors.our_dc_no && (
-                        <p className="text-red-500 text-right">
-                          {errors.our_dc_no.message}
-                        </p>
-                      )}
-                    </FormItem>
-                  )}
-                />
+                
                 <FormField
                   control={form.control}
                   name="hsn_code"
@@ -411,7 +453,7 @@ export const CreateForm = () => {
                   <div key={field.id} className="border p-4 mb-4">
                     <FormField
                       control={form.control}
-                      name={`products.${index}.product_length`}
+                      name={`items.${index}.length`}
                       render={() => (
                         <FormItem>
                           <FormLabel>Product Length</FormLabel>
@@ -419,7 +461,7 @@ export const CreateForm = () => {
                             <Input
                               placeholder="Enter product length"
                               {...register(
-                                `products.${index}.product_length` as const,
+                                `items.${index}.length` as const,
                                 {
                                   required: "Product length is required",
                                   valueAsNumber: true,
@@ -428,9 +470,9 @@ export const CreateForm = () => {
                               )}
                             />
                           </FormControl>
-                          {errors.products?.[index]?.product_length && (
+                          {errors.items?.[index]?.length && (
                             <p className="text-red-500 text-right">
-                              {errors.products[index]?.product_length?.message}
+                              {errors.items[index]?.length?.message}
                             </p>
                           )}
                         </FormItem>
@@ -438,7 +480,7 @@ export const CreateForm = () => {
                     />
                     <FormField
                       control={form.control}
-                      name={`products.${index}.product_width`}
+                      name={`items.${index}.width`}
                       render={() => (
                         <FormItem>
                           <FormLabel>Product Width</FormLabel>
@@ -446,7 +488,7 @@ export const CreateForm = () => {
                             <Input
                               placeholder="Enter product width"
                               {...register(
-                                `products.${index}.product_width` as const,
+                                `items.${index}.width` as const,
                                 {
                                   required: "Product width is required",
                                   valueAsNumber: true,
@@ -455,9 +497,9 @@ export const CreateForm = () => {
                               )}
                             />
                           </FormControl>
-                          {errors.products?.[index]?.product_width && (
+                          {errors.items?.[index]?.width && (
                             <p className="text-red-500 text-right">
-                              {errors.products[index]?.product_width?.message}
+                              {errors.items[index]?.width?.message}
                             </p>
                           )}
                         </FormItem>
@@ -465,23 +507,23 @@ export const CreateForm = () => {
                     />
                     <FormField
                       control={form.control}
-                      name={`products.${index}.qty`}
+                      name={`items.${index}.quantity`}
                       render={() => (
                         <FormItem>
                           <FormLabel>Quantity</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter quantity"
-                              {...register(`products.${index}.qty` as const, {
+                              {...register(`items.${index}.quantity` as const, {
                                 required: "Quantity is required",
                                 valueAsNumber: true,
                                 validate: validateNumber(1),
                               })}
                             />
                           </FormControl>
-                          {errors.products?.[index]?.qty && (
+                          {errors.items?.[index]?.quantity && (
                             <p className="text-red-500 text-right">
-                              {errors.products[index]?.qty?.message}
+                              {errors.items[index]?.quantity?.message}
                             </p>
                           )}
                         </FormItem>
@@ -489,23 +531,23 @@ export const CreateForm = () => {
                     />
                     <FormField
                       control={form.control}
-                      name={`products.${index}.rate`}
+                      name={`items.${index}.rate`}
                       render={() => (
                         <FormItem>
                           <FormLabel>Rate</FormLabel>
                           <FormControl style={{ marginBottom: 16 }}>
                             <Input
                               placeholder="Enter rate"
-                              {...register(`products.${index}.rate` as const, {
+                              {...register(`items.${index}.rate` as const, {
                                 required: "Rate is required",
                                 valueAsNumber: true,
                                 validate: validateNumber(0),
                               })}
                             />
                           </FormControl>
-                          {errors.products?.[index]?.rate && (
+                          {errors.items?.[index]?.rate && (
                             <p className="text-red-500 text-right">
-                              {errors.products[index]?.rate?.message}
+                              {errors.items[index]?.rate?.message}
                             </p>
                           )}
                         </FormItem>
@@ -531,9 +573,9 @@ export const CreateForm = () => {
                     className="p-5 m-2"
                     onClick={() =>
                       append({
-                        product_length: 0,
-                        product_width: 0,
-                        qty: 0,
+                        length: 0,
+                        width: 0,
+                        quantity: 0,
                         rate: 0,
                       })
                     }
