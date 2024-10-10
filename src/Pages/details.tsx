@@ -31,26 +31,31 @@ export const Details = () => {
                   Generate Invoice
                 </button>
               </a>
-              <button className="font-semibold  bg-indigo-500 p-1 rounded-sm  hover:bg-white hover:text-black">
-                Generate DC
-              </button>
+              <a
+                href={"http://localhost:5001/dc/" + data.dc_no}
+                className="text-white hover:text-gray-400"
+              >
+                <button className="font-semibold  bg-indigo-500 p-1 rounded-sm  hover:bg-white">
+                  Generate Dc
+                </button>
+              </a>
             </div>
-            <div className="mb-10 p-5  w-[30%]  rounded-md flex justify-center ">
-              <div className="">
+            <div className="mb-10 p-5  sm:w-[50%] lg:w-[25%] rounded-md flex justify-center ">
+              <div className="w-[100%]">
                 <div className="font-semibold flex justify-between">
-                  <span className="text-indigo-400">Date:</span>{" "}
+                  <span className="text-indigo-400">Date:</span>
                   <span className="font-bold"> {formattedDate}</span>
                 </div>
                 <div className="font-semibold flex justify-between">
-                  <span className="text-indigo-400">E_way_no:</span>{" "}
-                  <span className="font-bold ml-3">{data.e_way_no}</span>
+                  <span className="text-indigo-400">E_way_no:</span>
+                  <span className="font-bold">{data.e_way_no}</span>
                 </div>
                 <div className="font-semibold flex justify-between">
-                  <span className="text-indigo-400">Dc_no:</span>{" "}
+                  <span className="text-indigo-400">Dc_no:</span>
                   <span className="font-bold"> {data.dc_no}</span>
                 </div>
                 <div className="font-semibold flex justify-between">
-                  <span className="text-indigo-400">Gross_total:</span>{" "}
+                  <span className="text-indigo-400">Gross_total:</span>
                   <span className="font-bold"> {data.gross_total}</span>
                 </div>
               </div>
