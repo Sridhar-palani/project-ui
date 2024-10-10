@@ -1,5 +1,5 @@
 import { useGetJobs } from "@/hooks/useGetJobs";
-import { JobsCard } from "./JobsCard";
+import { JobsCard } from "../components/JobsCard";
 
 export const Jobs = () => {
   const { data, isLoading, isError, error } = useGetJobs();
@@ -14,7 +14,7 @@ export const Jobs = () => {
       {isError && <div className="m-auto">Error: {error.message}</div>}
       <div className="flex flex-wrap justify-center">
         {data &&
-          data?.orders?.map((order, index: number) => (
+          data.orders.map((order, index: number) => (
             <JobsCard
               title={order.dc_no}
               key={index}

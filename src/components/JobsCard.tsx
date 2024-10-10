@@ -1,6 +1,6 @@
 import { FaMapMarker, FaRupeeSign } from "react-icons/fa";
 import { FaBarsProgress } from "react-icons/fa6";
-
+import { Link } from "react-router-dom";
 type JobsCardProp = {
   title: string;
   description: string;
@@ -10,7 +10,7 @@ type JobsCardProp = {
 };
 
 export const JobsCard = ({
-  title,
+  title: dc,
   description,
   total,
   address,
@@ -22,7 +22,7 @@ export const JobsCard = ({
         {" "}
         <FaBarsProgress />
       </div>
-      <div className="text-black text-m font-semibold mt-1">{title}</div>
+      <div className="text-black text-m font-semibold mt-1">{dc}</div>
       <div className="text-gray-500 text-xs font-semibold mt-3">
         {description}
       </div>
@@ -35,9 +35,11 @@ export const JobsCard = ({
           <FaMapMarker />
           {address}
         </div>
-        <button className="text-white text-xs font-semibold mt-3 bg-indigo-500 py-1 px-2 rounded-md">
-          Read more
-        </button>
+        <Link to={`/orders/${dc}`}>
+          <button className="text-white text-xs font-semibold mt-3 bg-indigo-500 py-1 px-2 rounded-md">
+            Read more
+          </button>
+        </Link>
       </div>
     </div>
   );

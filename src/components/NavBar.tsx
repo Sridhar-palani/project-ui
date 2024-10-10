@@ -1,12 +1,11 @@
 import { AppContext } from "@/contexts/AppContext";
 import { useContext } from "react";
 import { FaIndustry } from "react-icons/fa";
-
 export const NavBar = () => {
   const { theme } = useContext(AppContext);
   return (
     <>
-      <div className={`${theme.colors.primary} py-3 flex justify-around`}>
+      <div className={`${theme.colors.primary} py-3 flex justify-around text-white`}>
         <div className="flex gap-2">
           <div>
             <FaIndustry size={"1.5rem"} />

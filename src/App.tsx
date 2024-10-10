@@ -1,19 +1,19 @@
-import "./App.css";
-import { Hero } from "@/components/Hero";
-import { NavBar } from "@/components/NavBar";
-import { Cards } from "@/components/Cards";
-import { Jobs } from "@/components/Jobs";
-import { Footer } from "@/components/Footer";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Home } from "./Pages/Home";
+import { Jobs } from "../src/Pages/orders";
+import { Order } from "./components/Order";
+import { CreateOrder } from "./Pages/CreateOrder";
 
 function App() {
   return (
-    <>
-      <NavBar />
-      <Hero />
-      <Cards />
-      <Jobs />
-      <Footer />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/orders" element={<Jobs />} />
+        <Route path="/orders/:id" element={<Order type="View" />} />
+        <Route path="/createorder" element={<CreateOrder/>} />
+      </Routes>
+    </Router>
   );
 }
 
