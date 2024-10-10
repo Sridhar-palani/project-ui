@@ -20,7 +20,9 @@ interface GetJobsResponse {
 }
 
 export const useGetJobs = (page: number, search: string) => {
-  const fetchJobs = async ({ queryKey }: QueryFunctionContext<JobsQueryKey>): Promise<GetJobsResponse> => {
+  const fetchJobs = async ({
+    queryKey,
+  }: QueryFunctionContext<JobsQueryKey>): Promise<GetJobsResponse> => {
     const [, page, search] = queryKey;
     let url = `http://localhost:5001/orders?page=${page}`;
 
@@ -30,9 +32,6 @@ export const useGetJobs = (page: number, search: string) => {
 
     const response = await fetch(url);
 
-export const useGetJobs = () => {
-  const fetchJobs = async () => {
-    const response = await fetch("http://localhost:5000/orders");
     if (!response.ok) {
       throw new Error("Failed to fetch jobs");
     }
