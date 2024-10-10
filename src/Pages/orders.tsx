@@ -1,83 +1,142 @@
-import { useState } from "react";
+// components/Jobs.tsx
+import React, { useState, useEffect, useCallback } from "react";
 import { useGetJobs } from "@/hooks/useGetJobs";
-import { JobsCard } from "../components/JobsCard";
 import { NavBar } from "@/components/NavBar";
+import { Footer } from "@/components/Footer";
+import debounce from "lodash.debounce";
+import { OrdersListing } from "@/components/OrderListing";
+import { Input } from "@/components/ui/input";
 
 export const Jobs = () => {
   const [page, setPage] = useState(1); // Track current page number
-  const { data, isLoading, isError, error } = useGetJobs(page);
-  const totalPages = data?.totalPages || 3; // Assuming you get total pages from the API
+  const [searchInput, setSearchInput] = useState(""); // Track input value
+  const [search, setSearch] = useState(""); // Track debounced search value
 
-  const nextPage = () => setPage((prev) => Math.min(prev + 1, totalPages)); // Increment page, not exceeding totalPages
-  const prevPage = () => setPage((prev) => Math.max(prev - 1, 1)); // Decrement page, but not below 1
+  // Debounce the search input to update 'search' state after a delay
+  const debounceSearch = useCallback(
+    debounce((query: string) => {
+      setSearch(query);
+      setPage(1); // Reset to first page on new search
+    }, 500), // 500ms delay
+    []
+  );
+
+  // Handle input changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    debounceSearch(e.target.value);
+  };
+
+  const { data, isLoading, isError, error } = useGetJobs(page, search);
+  const totalPages = data?.totalPages || 1; // Adjust default as needed
+
+  const nextPage = () => setPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setPage((prev) => Math.max(prev - 1, 1));
 
   const handlePageClick = (pageNumber: number) => {
     setPage(pageNumber);
   };
 
+  // Clean up debounce on unmount
+  useEffect(() => {
+    return () => {
+      debounceSearch.cancel();
+    };
+  }, [debounceSearch]);
+
+  // Determine if search is active
+  const isSearching = search.trim() !== "";
+
   return (
     <>
       <NavBar />
-      <div className="bg-slate-200 py-5">
-        <div className="text-indigo-400 text-center font-extrabold text-xl">
+      <div className="bg-slate-200 py-5 flex flex-col items-center">
+        <div className="text-indigo-400 text-center font-extrabold text-xl mb-5">
           Browse Orders
         </div>
-
+        {/* Search Input Field */}
+        {/* <input
+          type="search"
+          aria-label="Search orders"
+          value={searchInput}
+          onChange={handleSearchChange}
+          placeholder="Search orders..."
+          className="w-full max-w-5xl py-2 pl-10 text-sm text-black bg-gray-200 rounded-md mb-4"
+        /> */}
+        <Input
+          type="search"
+          aria-label="Search orders"
+          value={searchInput}
+          onChange={handleSearchChange}
+          placeholder="Search orders..."
+          className="w-full max-w-5xl py-2 pl-10 text-sm text-black bg-white rounded-md mb-4"
+        />
         {isLoading && <div className="m-auto">Loading...</div>}
-        {isError && <div className="m-auto">Error: {error.message}</div>}
-        
-        <div className="flex flex-wrap justify-center">
-          {data &&
-            data.orders?.map((order, index: number) => (
-              <JobsCard
-                title={order.dc_no}
-                key={index}
-                address={order.to}
-                description={order.product_description}
-                status="done"
-                total={order.gross_total}
-              />
-            ))}
+        {isError && (
+          <div className="m-auto">
+            Error: {error?.message || "An unexpected error occurred."}
+          </div>
+        )}
+        {data?.orders?.length === 0 && !isLoading && !isError && (
+          <div className="m-auto">No results found.</div>
+        )}
+        {/* Orders Listing */}
+        <div className="flex flex-col w-full max-w-5xl bg-white rounded-md min-h-[44rem] mt-2 p-4 overflow-y-auto">
+          {data?.orders.map((order) => (
+            <OrdersListing
+              dc_no={order.dc_no}
+              key={order.dc_no}
+              to={order.to}
+              date={order.date}
+              status="done"
+            />
+          ))}
         </div>
-
         {/* Pagination Controls */}
-        <div className="flex justify-center mt-4 space-x-2">
-          {/* Previous Button */}
-          <button
-            onClick={prevPage}
-            disabled={page === 1} // Disable if on the first page
-            className="bg-indigo-500 text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
+        {!isSearching && data?.totalPages > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {/* Previous Button */}
+            <button
+              onClick={prevPage}
+              disabled={page === 1}
+              className="bg-indigo-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              aria-label="Previous Page"
+            >
+              Previous
+            </button>
 
-          {/* Page Numbers */}
-          {[...Array(totalPages)].map((_, i) => {
-            const pageNumber = i + 1;
-            return (
-              <button
-                key={pageNumber}
-                onClick={() => handlePageClick(pageNumber)}
-                className={`px-4 py-2 rounded ${
-                  page === pageNumber ? 'bg-gray-400 text-white' : 'bg-white text-indigo-500'
-                }`}
-              >
-                {pageNumber}
-              </button>
-            );
-          })}
+            {/* Page Numbers */}
+            {Array.from({ length: totalPages }, (_, i) => {
+              const pageNumber = i + 1;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageClick(pageNumber)}
+                  className={`px-4 py-2 rounded ${
+                    page === pageNumber
+                      ? "bg-gray-400 text-white"
+                      : "bg-white text-indigo-500"
+                  }`}
+                  aria-label={`Page ${pageNumber}`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
 
-          {/* Next Button */}
-          <button
-            onClick={nextPage}
-            disabled={page === totalPages} // Disable if on the last page
-            className="bg-indigo-500 text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+            {/* Next Button */}
+            <button
+              onClick={nextPage}
+              disabled={page === totalPages}
+              className="bg-indigo-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              aria-label="Next Page"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
+      <Footer />
     </>
   );
 };
-

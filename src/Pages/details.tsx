@@ -27,7 +27,7 @@ export const Details = () => {
                 href={"http://localhost:5001/pdf/" + data.dc_no}
                 className="text-white hover:text-gray-400"
               >
-                <button className="font-semibold  bg-indigo-500 p-1 rounded-sm  hover:bg-white">
+                <button className="font-semibold  bg-indigo-500 p-1 rounded-sm  hover:bg-white hover:text-black">
                   Generate Invoice
                 </button>
               </a>
