@@ -1,12 +1,17 @@
-import { AppContext } from "@/contexts/AppContext";
-import { useContext } from "react";
+import { useAppContext } from "@/contexts/AppContext";
 import { FaIndustry } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useLogoutUser } from "@/hooks/user/logout/logout-user";
+
 export const NavBar = () => {
-  const { theme } = useContext(AppContext);
+  const { isLoggedIn } = useAppContext();
+  const location = window.location.pathname;
+  const activeTab = location;
+  const { mutate } = useLogoutUser();
+
   return (
     <>
-      <div className={`${theme.colors.primary} py-3 flex justify-around text-white`}>
+      <div className="py-3 flex justify-around bg-indigo-500 text-white">
         <div className="flex gap-2">
           <div>
             <FaIndustry size={"1.5rem"} />
@@ -14,15 +19,45 @@ export const NavBar = () => {
           <div className="font-bold">Karthick Industries</div>
         </div>
         <div className="flex gap-5">
-          <Link to="/">
-          <button className=" font-bold text-white px-2 rounded-md">
-            Home
-          </button></Link>
-          <Link to ="/orders">
-
-          <button className=" font-bold text-white px-2 rounded-md">Orders</button>
-          </Link>
-          {/* <button className=" font-bold px-2 rounded-md">About</button> */}
+          {isLoggedIn ? (
+            <>
+              <Link to="/user">
+                <button
+                  className={`font-bold text-white px-2 rounded-md hover:bg-indigo-200 ${
+                    activeTab === "/user" ? "bg-indigo-300" : ""
+                  }`}
+                >
+                  Home
+                </button>
+              </Link>
+              <Link to="/orders">
+                <button
+                  className={`font-bold text-white px-2 rounded-md hover:bg-indigo-200 ${
+                    activeTab === "/orders" ? "bg-indigo-300" : ""
+                  }`}
+                >
+                  Orders
+                </button>
+              </Link>
+              <button
+                className=" px-3 rounded-sm font-bold hover:bg-indigo-200 text-white"
+                onClick={() => mutate()}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              {location === "/" && (
+                <Link
+                  to="/sign-in"
+                  className="flex bg-white items-center rounded-sm text-blue-600 px-3 font-bold hover:bg-indigo-200"
+                >
+                  Sign In
+                </Link>
+              )}
+            </>
+          )}
         </div>
       </div>
       <div className="h-px bg-gray-600"></div>

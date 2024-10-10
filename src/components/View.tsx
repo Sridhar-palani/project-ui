@@ -15,8 +15,6 @@ type MetaData = {
 type Item = {
   meta_data: MetaData;
   quantity: number;
-  material_value: number;
-  total_weight: number;
   rate: number;
   amount: number;
   image: string;
@@ -39,6 +37,7 @@ type OrderType = {
   cgst: number;
   sgst: number;
   net_total: number;
+  material_value: number;
   gross_total: number;
   total_weight?: number;
 };
@@ -110,17 +109,6 @@ const Items = ({ data }: { data: OrderType }) => {
                       type="text"
                       className="border rounded p-2 w-full font-normal bg-transparent"
                       value={orders.meta_data?.width || "N/A"}
-                      typeof="readOnly"
-                    />
-                  </label>
-                </div>
-                <div className="lables">
-                  <label className="  font-semibold flex-1 p-2">
-                    Material_Value:
-                    <input
-                      type="text"
-                      className="border rounded p-2 w-full font-normal bg-transparent"
-                      value={orders.material_value}
                       typeof="readOnly"
                     />
                   </label>
@@ -268,6 +256,28 @@ const Commercial = ({ data }: { data: OrderType }) => {
         </label>
       </div>
       <div className="lables">
+        <label className=" font-semibold p-2 flex-1 ">
+          Total weight:
+          <input
+            className="border rounded w-full p-2 font-normal bg-transparent"
+            type="text"
+            value={data.total_weight}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
+        <label className=" font-semibold p-2 flex-1 ">
+          Material value:
+          <input
+            className="border rounded w-full p-2 font-normal bg-transparent"
+            type="text"
+            value={data.material_value}
+            typeof="readOnly"
+          />
+        </label>
+      </div>
+      <div className="lables">
         <label className="  font-semibold flex-1 p-2">
           Net Total:
           <input
@@ -296,17 +306,6 @@ const Commercial = ({ data }: { data: OrderType }) => {
             type="text"
             className="border rounded p-2 w-full font-normal bg-transparent"
             value={data.sgst}
-            typeof="readOnly"
-          />
-        </label>
-      </div>
-      <div className="lables">
-        <label className="  font-semibold flex-1 p-2">
-          Total Weight:
-          <input
-            type="text"
-            className="border rounded p-2 w-full font-normal bg-transparent"
-            value={data.total_weight}
             typeof="readOnly"
           />
         </label>
