@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { CreateForm } from "./CreateForm";
-import { usePostOrder } from "@/hooks/usePostOrder";
+import { usePostOrder } from "@/hooks/user/postorder/usePostOrder";
 import { NavBar } from "./NavBar";
 import { Footer } from "./Footer";
 import { Details } from "@/Pages/details";
@@ -28,7 +28,7 @@ export const Order = ({ order, type }: OrderProps) => {
     <div>
       {type === "View" && (
         <>
-          <Details/>
+          <Details />
         </>
       )}
       {/* {type === "Create" && (

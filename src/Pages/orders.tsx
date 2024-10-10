@@ -54,15 +54,6 @@ export const Jobs = () => {
         <div className="text-indigo-400 text-center font-extrabold text-xl mb-5">
           Browse Orders
         </div>
-        {/* Search Input Field */}
-        {/* <input
-          type="search"
-          aria-label="Search orders"
-          value={searchInput}
-          onChange={handleSearchChange}
-          placeholder="Search orders..."
-          className="w-full max-w-5xl py-2 pl-10 text-sm text-black bg-gray-200 rounded-md mb-4"
-        /> */}
         <Input
           type="search"
           aria-label="Search orders"
@@ -80,6 +71,20 @@ export const Jobs = () => {
         {data?.orders?.length === 0 && !isLoading && !isError && (
           <div className="m-auto">No results found.</div>
         )}
+        <div className="flex justify-around w-full max-w-5xl bg-white rounded-md mt-2 p-3 overflow-y-auto">
+          <div className="text-lg font-bold">
+            <div>DC No</div>
+          </div>
+          <div className="text-lg font-bold">
+            <div>Date</div>
+          </div>
+          <div className="text-lg font-bold">
+            <div>To</div>
+          </div>
+          <div className="text-lg font-bold">
+            <div>Gross Total</div>
+          </div>
+        </div>
         {/* Orders Listing */}
         <div className="flex flex-col w-full max-w-5xl bg-white rounded-md min-h-[44rem] mt-2 p-4 overflow-y-auto">
           {data?.orders.map((order) => (
@@ -88,6 +93,7 @@ export const Jobs = () => {
               key={order.dc_no}
               to={order.to}
               date={order.date}
+              gross_total={order.gross_total}
               status="done"
             />
           ))}
@@ -108,20 +114,32 @@ export const Jobs = () => {
             {/* Page Numbers */}
             {Array.from({ length: totalPages }, (_, i) => {
               const pageNumber = i + 1;
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageClick(pageNumber)}
-                  className={`px-4 py-2 rounded ${
-                    page === pageNumber
-                      ? "bg-gray-400 text-white"
-                      : "bg-white text-indigo-500"
-                  }`}
-                  aria-label={`Page ${pageNumber}`}
-                >
-                  {pageNumber}
-                </button>
-              );
+              const isNearCurrentPage =
+                pageNumber === page || Math.abs(page - pageNumber) <= 1;
+
+              const isFirstPage = pageNumber === 1;
+              const isLastPage = pageNumber === totalPages;
+
+              if (isFirstPage || isLastPage || isNearCurrentPage) {
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => handlePageClick(pageNumber)}
+                    className={`px-4 py-2 rounded ${
+                      page === pageNumber
+                        ? "bg-gray-400 text-white"
+                        : "bg-white text-indigo-500"
+                    }`}
+                    aria-label={`Page ${pageNumber}`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              } else if (pageNumber === 2 || pageNumber === totalPages - 1) {
+                // Display ellipsis for skipping pages
+                return <span key={pageNumber}>...</span>;
+              }
+              return null;
             })}
 
             {/* Next Button */}

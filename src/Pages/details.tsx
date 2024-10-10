@@ -6,7 +6,6 @@ import { View } from "../components/View";
 
 export const Details = () => {
   const { id } = useParams();
-  console.log(id);
   const { data, isLoading, isError, error } = useGetJobsById(id);
   const date = new Date(data?.date);
   const formattedDate = date.toLocaleDateString("en-US", {

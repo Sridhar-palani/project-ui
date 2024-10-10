@@ -6,7 +6,7 @@ import { CreateOrder } from "./Pages/CreateOrder";
 import { useAppContext } from "../src/contexts/AppContext";
 import { SignIn } from "./Pages/SignIn";
 import { Register } from "./Pages/Register";
-import { Home } from "./Pages/home";
+import { Home } from "./Pages/Home";
 
 function App() {
   const { isLoggedIn } = useAppContext();
