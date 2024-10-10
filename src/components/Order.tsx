@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { CreateForm } from "./CreateForm";
 import { usePostOrder } from "@/hooks/usePostOrder";
 import { NavBar } from "./NavBar";
@@ -31,15 +31,13 @@ export const Order = ({ order, type }: OrderProps) => {
           <Details/>
         </>
       )}
-      {type === "Create" && (
+      {/* {type === "Create" && (
         <div>
-          {/* <button onClick={handleFormCreation}>Create</button>
-          <button>Cancel</button> */}
-          <NavBar />
+          <NavBar/>
           <CreateForm />
           <Footer />
         </div>
-      )}
+      )} */}
 
       {/* {type === "Update" && (
         <div>
